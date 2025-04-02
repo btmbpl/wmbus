@@ -1,5 +1,5 @@
 dashboard_import:
-  package_import_url: github://btmbpl/wmbus.yaml@main
+  package_import_url: github://btmbpl/wmbus/blob/main/wmbus.yaml
   import_full_config: true
 
 esphome:
