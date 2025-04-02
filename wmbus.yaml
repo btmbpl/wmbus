@@ -1,0 +1,112 @@
+dashboard_import:
+  package_import_url: github://btmbpl/wmbus.yaml@main
+  import_full_config: true
+
+esphome:
+  name: wmbus
+  friendly_name: wmbus
+#
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+# Enable logging
+logger:
+  level: WARN
+  baud_rate: 0
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "BSsUx1kEOhkterpf1qcfPdZ6uiLL6GPQnE2eXbgDTvY="
+#
+ota:
+  - platform: esphome
+    password: "1bda8135bd7754865f02514b18eda5e7"
+#
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  fast_connect: True
+  power_save_mode: LIGHT
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "woda"
+    password: "12345678"
+#
+captive_portal:
+time:
+  - platform: sntp
+    id: time_sntp
+#
+external_components:
+  - source: github://SzczepanLeon/esphome-components@main
+    refresh: 0d
+    components: [ wmbus ]
+#
+wmbus:
+  mosi_pin: GPIO23
+  miso_pin: GPIO19
+  clk_pin:  GPIO18
+  cs_pin:   GPIO05
+  gdo0_pin: GPIO02
+  gdo2_pin: GPIO04
+#
+  frequency: 868.950
+  all_drivers: False
+  sync_mode: True
+  log_all: False
+#
+sensor:
+  - platform: wmbus
+    meter_id: 0x04983666
+    type: apator162
+    key: "00000000000000000000000000000000"
+    sensors:
+      - name: "RSSi licznik wody"
+        field: "rssi"
+        accuracy_decimals: 0
+        unit_of_measurement: "dBm"
+        device_class: "signal_strength"
+        state_class: "measurement"
+        entity_category: "diagnostic"
+      - name: "licznik wody"
+        field: "total"
+        accuracy_decimals: 3
+        unit_of_measurement: "m³"
+        device_class: "water"
+        state_class: "total_increasing"
+        icon: "mdi:water"
+        filters:
+          - lambda: return (x - (id(of).state));
+#
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: IP
+      icon: "mdi:ip-network"
+    ssid:
+      name: SSID
+      icon: "mdi:access-point-network"
+#
+  - platform: version
+    name: Version
+    hide_timestamp: true
+    disabled_by_default: false
+    icon: mdi:new-box
+    entity_category: "diagnostic"
+#
+button:
+  - platform: restart
+    name: Restart
+    entity_category: "config"
+#
+number:
+  - platform: template
+    name: "offset"
+    id: of
+    optimistic: true
+    min_value: -500
+    max_value: 500
+    step: 0.001
+    mode: box
+    restore_value: true
