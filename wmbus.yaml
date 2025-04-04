@@ -82,7 +82,7 @@ sensor:
         state_class: "total_increasing"
         icon: "mdi:water"
         filters:
-          - lambda: return (x + (id(ofa).state));
+          - lambda: return (x + id(ofa).state);
 ### izar ###
 #  - platform: wmbus
 #    meter_id: 0x00000000
@@ -104,18 +104,18 @@ sensor:
 #        icon: "mdi:water"
 #        filters:
 #          - lambda: return (x + (id(ofi).state));
-#      - name: "IZAR Consumption in the last month"
+#      - name: "izar ostatni miesiąc"
 #        field: "last_month_total"
 #        accuracy_decimals: 3
 #        unit_of_measurement: "m³"
 #        device_class: "water"
 #        state_class: "total_increasing"
 #        icon: "mdi:water"
-#      - name: "IZAR Transmission period"
+#      - name: "izar transmisja"
 #        field: "transmit_period"
 #        accuracy_decimals: 0
 #        unit_of_measurement: "Second"
-#      - name: "IZAR Remaining battery life"
+#      - name: "izar bateria"
 #        field: "remaining_battery_life"
 #        accuracy_decimals: 0
 #        unit_of_measurement: "Year"
@@ -125,14 +125,14 @@ sensor:
 #    type: unismart
 #    key: "00000000000000000000000000000000"
 #    sensors:
-#      - name: "RSSI UNISMART"
+#      - name: "RSSI licznik gaz"
 #        field: "rssi"
 #        accuracy_decimals: 0
 #        unit_of_measurement: "dBm"
 #        device_class: "signal_strength"
 #        state_class: "measurement"
 #        entity_category: "diagnostic"
-#      - name: "UNISMART gas meter state"
+#      - name: "licznik gaz"
 #        field: "total"
 #        accuracy_decimals: 3
 #        unit_of_measurement: "m³"
