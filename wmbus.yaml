@@ -1,12 +1,12 @@
 dashboard_import:
   package_import_url: github://btmbpl/wmbus/wmbus.yaml@main
   import_full_config: true
-
+#
 esphome:
   name: wmbus
   friendly_name: wmbus
   project:
-    name: esphome.wmbus
+    name: btm.wmbus
     version: "1.0"
 #
 esp32:
@@ -15,7 +15,7 @@ esp32:
     type: arduino
 # Enable logging
 logger:
-  level: WARN
+  level: DEBUG
   baud_rate: 0
 # Enable Home Assistant API
 api:
@@ -36,7 +36,6 @@ wifi:
     ssid: "wmbus"
 #    password: "12345678"
 #
-captive_portal:
 time:
   - platform: sntp
     id: time_sntp
@@ -45,6 +44,8 @@ external_components:
   - source: github://SzczepanLeon/esphome-components@main
     refresh: 0d
     components: [ wmbus ]
+#
+captive_portal:
 #
 wmbus:
   mosi_pin: GPIO23
@@ -56,10 +57,11 @@ wmbus:
 #
   frequency: 868.950
   all_drivers: False
-  sync_mode: True
+  sync_mode: False
   log_all: False
 #
 sensor:
+### apator ###
   - platform: wmbus
     meter_id: 0x04983666
     type: apator162
@@ -80,8 +82,102 @@ sensor:
         state_class: "total_increasing"
         icon: "mdi:water"
         filters:
-          - lambda: return (x - (id(of).state));
-#
+          - lambda: return (x + (id(ofa).state));
+### izar ###
+#  - platform: wmbus
+#    meter_id: 0x00000000
+#    type: izar
+#    sensors:
+#      - name: "RSSI izar"
+#        field: "rssi"
+#        accuracy_decimals: 0
+#        unit_of_measurement: "dBm"
+#        device_class: "signal_strength"
+#        state_class: "measurement"
+#        entity_category: "diagnostic"
+#      - name: "izar licznik wody"
+#        field: "total"
+#        accuracy_decimals: 3
+#        unit_of_measurement: "m³"
+#        device_class: "water"
+#        state_class: "total_increasing"
+#        icon: "mdi:water"
+#        filters:
+#          - lambda: return (x + (id(ofi).state));
+#      - name: "IZAR Consumption in the last month"
+#        field: "last_month_total"
+#        accuracy_decimals: 3
+#        unit_of_measurement: "m³"
+#        device_class: "water"
+#        state_class: "total_increasing"
+#        icon: "mdi:water"
+#      - name: "IZAR Transmission period"
+#        field: "transmit_period"
+#        accuracy_decimals: 0
+#        unit_of_measurement: "Second"
+#      - name: "IZAR Remaining battery life"
+#        field: "remaining_battery_life"
+#        accuracy_decimals: 0
+#        unit_of_measurement: "Year"
+### unismart ###
+#  - platform: wmbus
+#    meter_id: 0x00000000
+#    type: unismart
+#    key: "00000000000000000000000000000000"
+#    sensors:
+#      - name: "RSSI UNISMART"
+#        field: "rssi"
+#        accuracy_decimals: 0
+#        unit_of_measurement: "dBm"
+#        device_class: "signal_strength"
+#        state_class: "measurement"
+#        entity_category: "diagnostic"
+#      - name: "UNISMART gas meter state"
+#        field: "total"
+#        accuracy_decimals: 3
+#        unit_of_measurement: "m³"
+#        device_class: "gas"
+#        state_class: "total_increasing"
+#        icon: "mdi:water"
+#        filters:
+#          - lambda: return (x + (id(ofu).state));
+### ------------- ###
+### Number Sensor ###
+### ------------- ###
+number:
+  - platform: template
+    name: "offset apator"
+    id: ofa
+    optimistic: true
+    min_value: -500
+    max_value: 500
+    step: 0.001
+    initial_value: 0
+    mode: box
+    restore_value: true
+#  - platform: template
+#    name: "offset izar"
+#    id: ofi
+#    optimistic: true
+#    min_value: -500
+#    max_value: 500
+#    step: 0.001
+#    initial_value: 0
+#    mode: box
+#    restore_value: true
+#  - platform: template
+#    name: "offset unismart"
+#    id: ofu
+#    optimistic: true
+#    min_value: -500
+#    max_value: 500
+#    step: 0.001
+#    initial_value: 0
+#    mode: box
+#    restore_value: true
+### ------------------ ###
+### Diagnostic Sensors ###
+### ------------------ ###
 text_sensor:
   - platform: wifi_info
     ip_address:
@@ -102,15 +198,6 @@ button:
   - platform: restart
     name: Restart
     entity_category: "config"
-#
-number:
-  - platform: template
-    name: "offset"
-    id: of
-    optimistic: true
-    min_value: -500
-    max_value: 500
-    step: 0.001
-    initial_value: 0
-    mode: box
-    restore_value: true
+## ------------------ ##
+## End of Diagnostic  ##
+## ------------------ ##
